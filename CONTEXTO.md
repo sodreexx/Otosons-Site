@@ -17,6 +17,7 @@ pelo cliente, mais um preloader vindo de um arquivo Figma Make.
 | Item | Valor |
 |---|---|
 | Projeto | `E:\dev\otosons` — **fora do OneDrive** |
+| Repositório | https://github.com/sodreexx/Otosons-Site (público, branch `main`) |
 | Assets originais | `C:\Users\andre\OneDrive\Área de Trabalho\Lucas Trabalho\Otosons` |
 | Cache npm | `E:\npm-cache` (redirecionado) |
 | Dev server | `npm run dev` → porta 3000 (nas sessões usei 3210 via `.claude/launch.json`) |
@@ -227,8 +228,9 @@ sempre acima da dobra.
 5. **Barra invisível do equalizador** — decidir se corrige.
 6. **Título do hero**: negrito (atual) vs peso normal (mockup). Se mudar,
    recalibrar o corpo da fonte junto — sem negrito o texto fica mais estreito.
-7. **Sem git** — o projeto não é repositório. `git init` seria prudente.
-8. **Frames originais só no OneDrive** — não estão versionados no projeto.
+7. **Frames originais só no OneDrive** — os 121 GIFs de 1920×1080 que alimentam
+   `scripts/build-frames.mjs` não estão versionados; só os WebP derivados, em
+   `public/hero-frames/`, estão. Se o OneDrive sumir, não dá para regerar.
 
 ---
 
