@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — amostrados pixel a pixel do mockup.
+   O mockup foi feito com a paleta padrão do Tailwind: todo texto azul é
+   blue-800 (#1E40AF), o corpo é gray-500 (#6B7280) e os fundos de seção
+   são #F3F4F6.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-brand-50: #eff4ff;
+  --color-brand-100: #dbe6fe;
+  --color-brand-200: #bfd3fe;
+  --color-brand-300: #93b4fd;
+  --color-brand-400: #6090fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #2148b7;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+
+  --color-surface: #f3f4f6;
+  --color-body: #6b7280;
+
+  /* Tons exclusivos do hero e da navbar, amostrados do mockup do topo.
+     Eles são propositalmente diferentes do resto do site: o título do hero
+     é preto puro (não azul) e os botões do topo usam um azul um pouco mais
+     vivo que o brand-800 das demais seções. */
+  --color-hero-ink: #000000;
+  --color-hero-muted: #7f7f7f;
+  --color-hero-subtle: #a0a0a0;
+  --color-hero-cta: #2749c4;
+  --color-nav-link: #7a7a83;
+
+  /* Ciano do núcleo da onda sonora do hero. Não aparece em nenhum outro lugar
+     do site: as pontas da onda morrem no azul da marca. */
+  --color-onda: #00aeef;
+
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* compensa o header fixo (104px) ao pular por âncora */
+    scroll-padding-top: 7.5rem;
+  }
+
+  body {
+    @apply bg-white font-sans text-[15px] leading-relaxed text-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold text-brand-800;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-brand-800 text-white;
+  }
+
+  /* Foco visível e consistente para navegação por teclado */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
+
+@layer components {
+  /* Container do mockup: ~990px de conteúdo num viewport de 1089px, com
+     ~50px de respiro de cada lado. Acima de 1248px o max-w assume e o
+     padding deixa de importar. */
+  .container-site {
+    @apply mx-auto w-full max-w-6xl px-6 md:px-12;
+  }
+
+  /* Sublinhado curto azul sob os títulos de seção */
+  .rule-underline {
+    @apply mx-auto mt-6 block h-1 w-14 rounded-full bg-brand-600;
+  }
+
+  .kicker {
+    @apply font-display text-xs font-semibold uppercase tracking-[0.14em] text-brand-600;
+  }
+
+  /*
+   * Hero de tela cheia: tipografia e sobreposição atreladas à ALTURA da
+   * viewport, não a breakpoints de largura.
+   *
+   * Num hero 100vh a altura é o recurso escasso. Com corpo de fonte fixo, um
+   * notebook de 700px de altura empurrava o CTA para baixo da dobra. Aqui
+   * tudo encolhe junto e o bloco continua cabendo.
+   */
+  .hero-texto {
+    --hero-fonte: 1.625rem;
+    margin-top: -56px;
+  }
+
+  .hero-titulo {
+    font-size: var(--hero-fonte);
+    line-height: 1.28;
+  }
+
+  @media (min-width: 640px) {
+    .hero-texto {
+      --hero-fonte: 2.125rem;
+      margin-top: -78px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero-texto {
+      --hero-fonte: clamp(1.75rem, 4.4svh, 2.75rem);
+      /*
+       * 2,6 = line-height (1,18) + o padding da máscara das palavras (0,12),
+       * multiplicado pelas duas linhas que ficam acima de "Valer a Pena".
+       * Os 8px compensam a borda transparente na base do frame.
+       * Resultado: a base do estojo encosta no topo da palavra "Pena".
+       */
+      margin-top: calc(-2.6 * var(--hero-fonte) - 8px);
+    }
+
+    .hero-titulo {
+      /* 242/200 do mockup */
+      line-height: 1.21;
+    }
+  }
+
+  /*
+   * Onda sonora do hero.
+   *
+   * Estado de repouso = o estado inicial da animação: fios achatados na linha
+   * do meio e SVG recortado no centro. Assim, se o JS nunca disparar, o que
+   * fica na tela é uma linha discreta atrás do case — não um borrão.
+   *
+   * O `animation-delay` de cada fio vem inline do componente (mesmo padrão das
+   * barras do preloader em splash-screen.tsx).
+   */
+  .onda-clip {
+    clip-path: inset(0 50% 0 50%);
+  }
+
+  .onda-fio {
+    /* view-box (não fill-box): a origem é o centro do viewBox, que é a linha
+       de repouso da onda. Com fill-box cada fio escalaria pelo centro da
+       própria caixa e eles se descolariam uns dos outros. */
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    transform: scaleY(0.015);
+  }
+
+  [data-onda="ativa"].onda-clip,
+  [data-onda="ativa"] .onda-clip {
+    animation: onda-expandir 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  [data-onda="ativa"] .onda-fio {
+    animation: onda-abrir 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes onda-expandir {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes onda-abrir {
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  /*
+   * Deriva lenta dos círculos decorativos da faixa azul do CTA final.
+   * Ciclos longos e primos entre si (23s / 29s) para os dois nunca voltarem
+   * ao mesmo ponto — o movimento não deve virar um padrão perceptível.
+   */
+  .cta-orbe-a {
+    animation: cta-deriva-a 23s ease-in-out infinite;
+  }
+
+  .cta-orbe-b {
+    animation: cta-deriva-b 29s ease-in-out infinite;
+  }
+
+  @keyframes cta-deriva-a {
+    50% {
+      transform: translate(26px, -18px) scale(1.06);
+    }
+  }
+
+  @keyframes cta-deriva-b {
+    50% {
+      transform: translate(-22px, 20px) scale(1.05);
+    }
+  }
+
+  .onda-halo {
+    opacity: 0;
+  }
+
+  [data-onda="ativa"] .onda-halo {
+    animation: onda-halo 1400ms cubic-bezier(0.22, 1, 0.36, 1) 300ms forwards;
+  }
+
+  @keyframes onda-halo {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(0.4);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scaleX(1);
+    }
+  }
+
+  /* Sem movimento: a onda já nasce aberta, sem animar nada. */
+  @media (prefers-reduced-motion: reduce) {
+    .onda-clip {
+      clip-path: none;
+    }
+
+    .onda-fio {
+      transform: scaleY(1);
+    }
+
+    .onda-halo {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+
+    .cta-orbe-a,
+    .cta-orbe-b {
+      animation: none;
+    }
+
+    [data-onda="ativa"].onda-clip,
+    [data-onda="ativa"] .onda-clip,
+    [data-onda="ativa"] .onda-fio,
+    [data-onda="ativa"] .onda-halo {
+      animation: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Preloader — barras da onda sonora.
+
+   Os @keyframes não vieram no SplashScreen.tsx do Figma Make (moram no
+   globals.css de lá). Reconstruí a partir dos delays do componente: eles vão
+   de -1.2s a -0.6s em passos de 0.1s, o que só faz sentido com um ciclo de
+   1.2s — cada barra entra defasada 1/12 do ciclo e a onda "anda" pelo
+   equalizador. O -1.2s equivale a fase zero, fechando a volta.
+--------------------------------------------------------------------------- */
+.splash-wave-bar {
+  width: 6px;
+  border-radius: 9999px;
+  transform-origin: center;
+  animation: splash-wave 1.2s ease-in-out infinite;
+}
+
+@keyframes splash-wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Acessibilidade: quem pediu menos movimento no SO recebe o layout final,
+   estático. As animações em JS também checam prefers-reduced-motion.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
