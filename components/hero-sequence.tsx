@@ -19,9 +19,14 @@ const FPS = 30;
  * `100svh - 400px` reserva altura fixa para header, título, subtítulo, CTA e
  * respiros; o que sobra vai para o aparelho. Sem essa reserva, em telas
  * baixas o estojo comia o espaço do CTA e o empurrava para fora da tela.
+ *
+ * Reserva do mobile reduzida de 480px para 440px: o título ficou mais
+ * compacto (3 linhas fixas, fonte em clamp — ver --hero-fonte em
+ * globals.css) e o subtítulo encolheu para 13px, sobrando altura real para
+ * dar mais espaço ao aparelho sem empurrar o CTA para fora da tela.
  */
 const TAMANHO =
-  "h-[clamp(140px,min(35svh,calc(100svh-480px)),300px)] w-auto max-w-full md:h-[clamp(240px,min(43svh,calc(100svh-430px)),540px)]";
+  "h-[clamp(160px,min(40svh,calc(100svh-440px)),340px)] w-auto max-w-full md:h-[clamp(240px,min(43svh,calc(100svh-430px)),540px)]";
 
 /**
  * Reproduz a sequência de frames do aparelho uma única vez e congela no

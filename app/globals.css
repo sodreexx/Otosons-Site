@@ -98,7 +98,7 @@
        mobile (ver hero-texto.tsx), a linha mais longa ("Recupere Sua Audição
        e Redescubra") só cabe numa linha só se a fonte encolher junto com a
        largura da tela — 1.625rem estourava e voltava a quebrar em 2. */
-    --hero-fonte: clamp(0.7rem, calc(5vw - 0.16rem), 1.85rem);
+    --hero-fonte: clamp(0.75rem, calc(5vw - 1.86px), 1.95rem);
     margin-top: -56px;
   }
 
