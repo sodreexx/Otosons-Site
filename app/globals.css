@@ -151,13 +151,26 @@
     transform: scaleY(0.015);
   }
 
+  /*
+   * Curva diferente do resto do site, de propósito.
+   *
+   * O site usa cubic-bezier(0.22, 1, 0.36, 1) em tudo — ótima para revelar um
+   * card, porque dispara e desacelera longo. Aqui ela ficava dura: o fio vai
+   * de scaleY 0.015 a 1, uma multiplicação de 66×, e com aquela curva atinge
+   * ~60% do tamanho nos primeiros 100ms. O olho lê isso como estalo, não como
+   * abertura.
+   *
+   * (0.4, 0, 0.2, 1) tem partida suave nas duas pontas: o fio começa a abrir
+   * devagar, e é essa fração inicial que produzia o salto da linha para a
+   * onda. Durações também mais longas — 1150ms contra 700ms.
+   */
   [data-onda="ativa"].onda-clip,
   [data-onda="ativa"] .onda-clip {
-    animation: onda-expandir 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: onda-expandir 900ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   [data-onda="ativa"] .onda-fio {
-    animation: onda-abrir 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: onda-abrir 1150ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   @keyframes onda-expandir {
@@ -197,25 +210,6 @@
     }
   }
 
-  .onda-halo {
-    opacity: 0;
-  }
-
-  [data-onda="ativa"] .onda-halo {
-    animation: onda-halo 1400ms cubic-bezier(0.22, 1, 0.36, 1) 300ms forwards;
-  }
-
-  @keyframes onda-halo {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -50%) scaleX(0.4);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, -50%) scaleX(1);
-    }
-  }
-
   /* Sem movimento: a onda já nasce aberta, sem animar nada. */
   @media (prefers-reduced-motion: reduce) {
     .onda-clip {
@@ -226,11 +220,6 @@
       transform: scaleY(1);
     }
 
-    .onda-halo {
-      opacity: 1;
-      transform: translate(-50%, -50%);
-    }
-
     .cta-orbe-a,
     .cta-orbe-b {
       animation: none;
@@ -238,8 +227,7 @@
 
     [data-onda="ativa"].onda-clip,
     [data-onda="ativa"] .onda-clip,
-    [data-onda="ativa"] .onda-fio,
-    [data-onda="ativa"] .onda-halo {
+    [data-onda="ativa"] .onda-fio {
       animation: none;
     }
   }

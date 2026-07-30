@@ -41,7 +41,7 @@ export function CtaFinal() {
                 </a>
 
                 <a
-                  href="#aparelhos"
+                  href="/aparelhos"
                   className="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/40 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white hover:bg-white/10 sm:w-auto"
                 >
                   {ctaFinal.secundario}

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { AudioLines, CalendarCheck, Menu, X } from "lucide-react";
 import { contato, navegacao, site } from "@/lib/site";
@@ -10,37 +12,7 @@ import { contato, navegacao, site } from "@/lib/site";
 export function SiteHeader({ logo }: { logo: string | null }) {
   const [rolou, setRolou] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
-  const [ativo, setAtivo] = useState<string | null>(null);
-
-  /*
-   * Marca na nav a seção em que a pessoa está.
-   *
-   * Só observa âncoras que existem de fato no DOM: parte da navegação
-   * (#aparelhos, #depoimentos, #faq) aponta para seções ainda não construídas,
-   * e `querySelector` devolveria null.
-   *
-   * `rootMargin` recorta a viewport para uma faixa fina logo abaixo do header
-   * fixo — sem isso, duas seções ficam visíveis ao mesmo tempo e o item ativo
-   * pisca entre elas.
-   */
-  useEffect(() => {
-    const alvos = navegacao
-      .map((item) => document.querySelector<HTMLElement>(item.href))
-      .filter((el): el is HTMLElement => el !== null);
-
-    if (alvos.length === 0) return;
-
-    const observador = new IntersectionObserver(
-      (entradas) => {
-        const visivel = entradas.find((e) => e.isIntersecting);
-        if (visivel) setAtivo(`#${visivel.target.id}`);
-      },
-      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
-    );
-
-    alvos.forEach((el) => observador.observe(el));
-    return () => observador.disconnect();
-  }, []);
+  const pathname = usePathname();
 
   /* Fundo sólido + sombra só depois que a página sai do topo. */
   useEffect(() => {
@@ -65,6 +37,11 @@ export function SiteHeader({ logo }: { logo: string | null }) {
     };
   }, [menuAberto]);
 
+  /* Fecha o menu mobile sozinho quando a rota muda (navegação por Link). */
+  useEffect(() => {
+    setMenuAberto(false);
+  }, [pathname]);
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
@@ -81,8 +58,8 @@ export function SiteHeader({ logo }: { logo: string | null }) {
         104px de altura deixa o logo centrado em y=52, como no mockup.
       */}
       <div className="mx-auto flex h-[88px] w-full max-w-[2200px] items-center justify-between gap-6 px-6 md:h-[104px] md:px-[5.5%]">
-        <a
-          href="#inicio"
+        <Link
+          href="/"
           className="shrink-0"
           aria-label={`${site.name} — página inicial`}
         >
@@ -111,29 +88,37 @@ export function SiteHeader({ logo }: { logo: string | null }) {
               </span>
             </span>
           )}
-        </a>
+        </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navegacao.map((item) => {
-            const estaAtivo = ativo === item.href;
+            /* "/" só fica ativo na home exata; as demais rotas ativam também
+               em sub-páginas (ex. /blog/algum-post continua com "Blog" aceso). */
+            const estaAtivo =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
 
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
-                aria-current={estaAtivo ? "true" : undefined}
-                className={`group relative text-sm transition-colors hover:text-brand-800 ${
-                  estaAtivo ? "text-brand-800" : "text-nav-link"
+                aria-current={estaAtivo ? "page" : undefined}
+                /*
+                 * Pílula em vez de sublinhado.
+                 *
+                 * A borda no item inativo é `transparent`, não ausente: sem
+                 * ela o item ganharia 2px de largura ao ficar ativo e a nav
+                 * inteira dançaria a cada navegação.
+                 */
+                className={`rounded-full border px-3.5 py-2 text-sm transition-all duration-200 ${
+                  estaAtivo
+                    ? "border-brand-200 bg-brand-50 font-medium text-brand-800"
+                    : "border-transparent text-nav-link hover:bg-brand-50/60 hover:text-brand-800"
                 }`}
               >
                 {item.label}
-                {/* sublinhado: cresce do centro no hover, fica cheio na seção atual */}
-                <span
-                  className={`absolute -bottom-1 left-1/2 h-px -translate-x-1/2 bg-brand-800 transition-all duration-300 group-hover:w-full ${
-                    estaAtivo ? "w-full" : "w-0"
-                  }`}
-                />
-              </a>
+              </Link>
             );
           })}
         </nav>
@@ -175,14 +160,13 @@ export function SiteHeader({ logo }: { logo: string | null }) {
           >
             <div className="mx-auto flex w-full max-w-[2200px] flex-col gap-1 px-6 py-4 md:px-[5.5%]">
               {navegacao.map((item) => (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
-                  onClick={() => setMenuAberto(false)}
                   className="rounded-lg px-2 py-3 text-sm text-gray-700 transition-colors hover:bg-brand-50 hover:text-brand-800"
                 >
                   {item.label}
-                </a>
+                </Link>
               ))}
               <a
                 href={contato.whatsapp}

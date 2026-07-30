@@ -22,7 +22,7 @@ export function Blog() {
             return (
               <Reveal key={post.titulo} delay={i * 0.12}>
                 <article className="group h-full overflow-hidden rounded-2xl bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-800/5">
-                  <a href={post.href} className="block">
+                  <a href={`/blog/${post.slug}`} className="block">
                     <div className="relative h-48 overflow-hidden bg-gray-200">
                       {temFoto ? (
                         <Image

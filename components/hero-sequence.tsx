@@ -61,6 +61,19 @@ export function HeroSequence({
     void Promise.all(
       frames.slice(1).map(async (src) => {
         const img = new window.Image();
+        /*
+         * Prioridade BAIXA nos 120 frames seguintes.
+         *
+         * Eles disparam todos de uma vez no mount. Na prioridade padrão os 120
+         * competem com CSS, JS, fontes e com o frame 0 — que é o candidato a
+         * LCP da home. Rebaixar aqui não atrasa a animação (ela só começa
+         * quando a cortina sobe, ~3s depois) e libera a banda para o caminho
+         * crítico. O frame 0 continua alto: tem <link rel="preload"
+         * fetchPriority="high"> em hero.tsx.
+         *
+         * Navegador sem suporte ignora a propriedade — não há regressão.
+         */
+        img.fetchPriority = "low";
         img.src = src;
         try {
           await img.decode();

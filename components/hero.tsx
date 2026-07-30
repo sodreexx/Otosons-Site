@@ -30,6 +30,26 @@ export function Hero() {
       id="inicio"
       className="relative flex min-h-svh flex-col overflow-hidden pt-[88px] md:pt-[104px]"
     >
+      {/*
+        Preload do PRIMEIRO frame.
+
+        Ele é o `src` inicial da <img> do hero e, na prática, o candidato a LCP
+        da home. Sem esta dica ele entra na mesma fila dos outros 120 frames que
+        o HeroSequence dispara de uma vez no mount, e pode ser servido depois
+        deles. O React 19 iça <link> para o <head> sozinho.
+
+        Só o frame 0: pré-carregar os 121 aqui daria a MESMA disputa de banda,
+        só mais cedo.
+      */}
+      {frames.length > 0 ? (
+        <link
+          rel="preload"
+          as="image"
+          href={frames[0]}
+          fetchPriority="high"
+        />
+      ) : null}
+
       {/* brilho bem sutil atrás do aparelho — só tira o branco chapado */}
       <div
         aria-hidden
