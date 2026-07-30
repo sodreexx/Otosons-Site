@@ -94,13 +94,25 @@
    * tudo encolhe junto e o bloco continua cabendo.
    */
   .hero-texto {
-    --hero-fonte: 1.625rem;
+    /* clamp em vw, não rem fixo: com as 3 linhas do mockup forçadas também no
+       mobile (ver hero-texto.tsx), a linha mais longa ("Recupere Sua Audição
+       e Redescubra") só cabe numa linha só se a fonte encolher junto com a
+       largura da tela — 1.625rem estourava e voltava a quebrar em 2. */
+    --hero-fonte: clamp(0.7rem, calc(5vw - 0.16rem), 1.85rem);
     margin-top: -56px;
   }
 
   .hero-titulo {
     font-size: var(--hero-fonte);
     line-height: 1.28;
+    /* Sobrescreve o text-wrap: balance herdado da regra genérica de h1..h4.
+       O título aqui não é um nó de texto simples: cada palavra é um span
+       inline-block isolado (máscara da animação de entrada). O balance tenta
+       redistribuir as linhas medindo esses spans como se fossem texto corrido
+       e, no mobile — onde as linhas fixas do mockup viram texto corrido —,
+       isso produz quebras inconsistentes entre navegadores (Safari iOS
+       principalmente): título com linhas desalinhadas/"quebrado". */
+    text-wrap: normal;
   }
 
   @media (min-width: 640px) {

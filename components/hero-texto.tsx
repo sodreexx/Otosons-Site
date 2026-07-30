@@ -13,8 +13,10 @@ type Linha = { escuro: string; claro: string };
  * impressão de o texto ser revelado em vez de simplesmente aparecer. O stagger
  * é curto (35ms) — mais que isso e a frase demora a ficar legível.
  *
- * As linhas são `inline` no mobile (texto corrido, quebra natural) e `block`
- * a partir de md, onde valem as quebras fixas medidas no mockup.
+ * As linhas são sempre `block` — as 3 quebras fixas do mockup valem em
+ * qualquer largura, inclusive no mobile. O que muda por breakpoint é só o
+ * tamanho da fonte (`--hero-fonte`, em globals.css), pequeno o bastante no
+ * mobile para cada linha caber sem quebrar de novo.
  */
 export function HeroTexto({
   linhas,
@@ -60,7 +62,7 @@ export function HeroTexto({
           acontece com a paleta. */}
       <h1 className="hero-titulo font-sans font-normal">
         {porLinha.map((palavras, li) => (
-          <span key={li} className="inline md:block">
+          <span key={li} className="block">
             {palavras.map(({ p, claro }) => {
               const i = indice++;
               return (
@@ -99,7 +101,11 @@ export function HeroTexto({
       {/* Sem mt-auto: a sobra de altura agora fica acima do aparelho (ver
           hero.tsx), não entre o título e o subtítulo. */}
       <motion.p
-        className="mx-auto max-w-[460px] pt-4 text-[16px] leading-[1.55] text-hero-subtle md:pt-5 md:text-[19px]"
+        /* text-[13px] no mobile: o título ali só cabe em 3 linhas (ver
+           --hero-fonte em globals.css) encolhendo até ~13-14px nas telas mais
+           estreitas — com o subtítulo nos 16px de antes ele ficava MAIOR que
+           o título, invertendo a hierarquia. */
+        className="mx-auto max-w-[460px] pt-4 text-[13px] leading-[1.55] text-hero-subtle md:pt-5 md:text-[19px]"
         initial={{ opacity: 0, y: semMovimento ? 0 : 16 }}
         animate={liberado ? { opacity: 1, y: 0 } : { opacity: 0, y: semMovimento ? 0 : 16 }}
         transition={{

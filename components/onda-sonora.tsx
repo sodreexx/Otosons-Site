@@ -272,8 +272,12 @@ export function OndaSonora() {
          w-screen: a onda vai de borda a borda da viewport, pedido do cliente.
          O envelope zera nas pontas, então ela termina em bico exatamente na
          borda — sem corte seco. O overflow-hidden da section do hero absorve
-         o excesso de 100vw quando há barra de rolagem vertical. */
-      className="pointer-events-none absolute inset-y-0 left-1/2 z-0 w-screen -translate-x-1/2"
+         o excesso de 100vw quando há barra de rolagem vertical.
+
+         hidden até md: no mobile o case ocupa quase toda a largura da tela,
+         então a onda não tem onde "sair de trás dele" — sobra só um traço
+         fino nas pontas. Removida a pedido do cliente nesse tamanho de tela. */
+      className="pointer-events-none absolute inset-y-0 left-1/2 z-0 hidden w-screen -translate-x-1/2 md:block"
     >
       <svg
         ref={svgRef}
